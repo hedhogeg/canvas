@@ -14,7 +14,7 @@ class Canvas {
         window.addEventListener('resize', this.resize.bind(this))
         this.resize()
         
-        this.player = new Player(this.stageWidth/2, this.stageHeight/2, 10, 'red')
+        this.player = new Player(this.stageWidth/2, this.stageHeight/2, 10, this.stageWidth, this.stageHeight, 'red')
         window.addEventListener('keydown', this.player.keyDown.bind(this.player))
         window.addEventListener('keyup', this.player.keyUp.bind(this.player))
 
@@ -33,7 +33,7 @@ class Canvas {
     animate() {
         window.requestAnimationFrame(this.animate.bind(this))
         this.ctx.clearRect(0, 0, this.stageWidth, this.stageHeight)
-        this.player.draw(this.ctx)
+        this.player.update(this.ctx)
     }
 }
 
