@@ -1,9 +1,9 @@
 export class Player {
-    constructor(x, y, radius, stageWidth, stageHeight, color) {
+    constructor(x, y, radius, stageW, stageH, color) {
         this.x = x
         this.y = y
-        this.stageWidth = stageWidth
-        this.stageHeight = stageHeight
+        this.stageW = stageW
+        this.stageH = stageH
         this.radius = radius
         this.color = color
         this.vx = 0
@@ -75,7 +75,7 @@ export class Player {
                 this.vy -= this.velocity
             }
         }
-        if (this.y < this.stageHeight - this.radius) {
+        if (this.y < this.stageH - this.radius) {
             if (this.keys.down.pressed) {
                 this.vy += this.velocity
             }
@@ -85,13 +85,44 @@ export class Player {
                 this.vx -= this.velocity
             }
         }
-        if (this.x < this.stageWidth - this.radius) {
+        if (this.x < this.stageW - this.radius) {
             if (this.keys.right.pressed) {
                 this.vx += this.velocity
             }
         }
         this.x += this.vx
         this.y += this.vy
+        this.draw(ctx)
+    }
+}
+
+export class Enemy {
+    constructor(x, y, px, py, radius, stageW, stageH, level, health) {
+        this.x = x
+        this.y = y
+        this.px = px
+        this.py = py
+        this.stageW = stageW
+        this.stageH = stageH
+        this.radius = radius
+        this.level = level
+        this.dx = (this.px - this.x) / Math.sqrt(Math.abs((this.px - this.x) * (this.px - this.x)) + Math.abs((this.py - this.y) * (this.py - this.y)))
+        this.dy = (this.py - this.y) / Math.sqrt(Math.abs((this.px - this.x) * (this.px - this.x)) + Math.abs((this.py - this.y) * (this.py - this.y)))
+        const v_list = [1, 2, 3, 4]
+        this.velocity = v_list[level]
+    }
+
+    draw(ctx) {
+        ctx.beginPath()
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2)
+        ctx.fillStyle = 'black'
+        ctx.fill()
+        ctx.closePath()
+    }
+
+    update(ctx) {
+        this.x += this.dx * this.velocity
+        this.y += this.dy * this.velocity
         this.draw(ctx)
     }
 }

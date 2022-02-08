@@ -1,5 +1,5 @@
 import {
-    Player
+    Player, Enemy
 } from "./jucklim_objects.js"
 const frame = document.getElementById('canvas_frame')
 
@@ -14,7 +14,9 @@ class Canvas {
         window.addEventListener('resize', this.resize.bind(this))
         this.resize()
         
-        this.player = new Player(this.stageWidth/2, this.stageHeight/2, 10, this.stageWidth, this.stageHeight, 'red')
+        this.player = new Player(this.stageW/2, this.stageH/2, 10, this.stageW, this.stageH, 'red')
+        this.e_list = []
+
         window.addEventListener('keydown', this.player.keyDown.bind(this.player))
         window.addEventListener('keyup', this.player.keyUp.bind(this.player))
 
@@ -22,21 +24,21 @@ class Canvas {
     }
 
     resize() {
-        this.stageWidth = frame.clientWidth
-        this.stageHeight = frame.clientHeight
+        this.stageW = frame.clientWidth
+        this.stageH = frame.clientHeight
 
-        this.canvas.width = this.stageWidth * 2
-        this.canvas.height = this.stageHeight * 2
+        this.canvas.width = this.stageW * 2
+        this.canvas.height = this.stageH * 2
         this.ctx.scale(2, 2)
     }
 
     animate() {
         window.requestAnimationFrame(this.animate.bind(this))
-        this.ctx.clearRect(0, 0, this.stageWidth, this.stageHeight)
+        this.ctx.clearRect(0, 0, this.stageW, this.stageH)
         this.player.update(this.ctx)
     }
 }
 
 window.onload = () => {
-    new Canvas()
+    const canvas = new Canvas()
 }
