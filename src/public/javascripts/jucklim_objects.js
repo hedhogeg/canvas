@@ -97,7 +97,7 @@ export class Player {
 }
 
 export class Enemy {
-    constructor(x, y, px, py, radius, stageW, stageH, level, health) {
+    constructor(x, y, px, py, radius, stageW, stageH, velocity, health, color) {
         this.x = x
         this.y = y
         this.px = px
@@ -105,17 +105,17 @@ export class Enemy {
         this.stageW = stageW
         this.stageH = stageH
         this.radius = radius
-        this.level = level
-        this.dx = (this.px - this.x) / Math.sqrt(Math.abs((this.px - this.x) * (this.px - this.x)) + Math.abs((this.py - this.y) * (this.py - this.y)))
-        this.dy = (this.py - this.y) / Math.sqrt(Math.abs((this.px - this.x) * (this.px - this.x)) + Math.abs((this.py - this.y) * (this.py - this.y)))
-        const v_list = [1, 2, 3, 4]
-        this.velocity = v_list[level]
+        this.dx = (this.px - this.x) / Math.hypot(this.px - this.x, this.py - this.y)
+        this.dy = (this.py - this.y) / Math.hypot(this.px - this.x, this.py - this.y)
+        this.velocity = velocity
+        this.health = health
+        this.color = color
     }
 
     draw(ctx) {
         ctx.beginPath()
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2)
-        ctx.fillStyle = 'black'
+        ctx.fillStyle = this.color
         ctx.fill()
         ctx.closePath()
     }
