@@ -1,7 +1,8 @@
 import {
-    Player, Enemy
+    Player, Enemy, Bullet
 } from "./jucklim_objects.js"
 const frame = document.getElementById('canvas_frame')
+let canvas
 
 // Canvas
 class Canvas {
@@ -10,23 +11,34 @@ class Canvas {
         this.ctx = this.canvas.getContext('2d')
 
         frame.appendChild(this.canvas)
-        
+        //resize
         window.addEventListener('resize', this.resize.bind(this))
         this.resize()
-        
+        //initial game setting
         this.gaming = true
-        this.player = new Player(this.stageW/2, this.stageH/2, 10, this.stageW, this.stageH, 'black')
+        this.player = new Player(this.stageW/2, this.stageH/2, 10, this.stageW, this.stageH, 3, 'black')
         const init_e = this.spawn(1)
         this.enemies = [init_e]
+        this.dead_enemies = 0
+        this.bullets = []
+        //gaming
         setInterval(() => {
             const level = Math.ceil(Math.random() * 3)
             const current_enemy = this.spawn(level)
             this.enemies.push(current_enemy)
-        }, 2000);
-
+        }, 1000);
+        setInterval(() => {
+            this.bullets.shift()
+        }, 5000);
+        //event
         window.addEventListener('keydown', this.player.keyDown.bind(this.player))
         window.addEventListener('keyup', this.player.keyUp.bind(this.player))
-
+        this.canvas.addEventListener('click', (event) => {
+            const current_bullet = new Bullet(this.player.x, this.player.y, event.offsetX, event.offsetY, 3, this.stageW, this.stageH, 5, 1, 'black')
+            this.bullets.push(current_bullet)
+            console.log(this.bullets)
+        })
+        //canvas frame
         window.requestAnimationFrame(this.animate.bind(this))
     }
 
@@ -41,17 +53,32 @@ class Canvas {
 
     animate() {
         if (this.gaming) {
-            window.requestAnimationFrame(this.animate.bind(this))
             this.ctx.clearRect(0, 0, this.stageW, this.stageH)
             this.player.update(this.ctx)
-            this.enemies.forEach((e) => {
-                const pedistance = Math.hypot(this.player.x - e.x, this.player.y - e.y)
-                if (pedistance <= this.player.radius + e.radius) {
-                    alert("boom")
-                    this.gaming = false
-                }
-                e.update(this.ctx)
+            this.bullets.forEach((b) => {
+                b.update(this.ctx)
             })
+            this.enemies.forEach((e) => {
+                if (e.health) {
+                    const pedistance = Math.hypot(this.player.x - e.x, this.player.y - e.y)
+                    if (pedistance <= this.player.radius + e.radius) {
+                        this.endGame()
+                    }
+                    this.bullets.forEach((b) => {
+                        const bedistance = Math.hypot(b.x - e.x, b.y - e.y)
+                        if (bedistance <= b.radius + e.radius) {
+                            e.health -= b.damage
+                            const bullet_index = this.bullets.indexOf(b)
+                            this.bullets.splice(bullet_index, 1)
+                        }
+                        
+                    })
+                    e.update(this.ctx)
+                } else {
+                    
+                }
+            })
+            window.requestAnimationFrame(this.animate.bind(this))
         }
     }
 
@@ -88,8 +115,13 @@ class Canvas {
 
         return new_enemy
     }
+
+    endGame() {
+        alert("You Died")
+        this.gaming = false
+    }
 }
 
 window.onload = () => {
-    const canvas = new Canvas()
+    canvas = new Canvas()
 }

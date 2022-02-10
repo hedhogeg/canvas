@@ -1,6 +1,7 @@
 body {
     width: 90vw;
     height: 90vh;
+    user-select: none;
 }
 
 .canvas_container {
