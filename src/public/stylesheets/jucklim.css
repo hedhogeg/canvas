@@ -7,10 +7,33 @@ body {
 .canvas_container {
     width: 80%;
     height: 80%;
+    position: relative;
+    border: 5px solid black;
 }
 
 canvas {
     width: 100%;
     height: 100%;
-    border: 5px solid black;
+}
+
+#esc_screen {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(200, 100, 100, 0.5);
+    z-index: 2;
+}
+
+#end_screen {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(100, 200, 100, 0.5);
+    z-index: 1;
 }

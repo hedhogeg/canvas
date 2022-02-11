@@ -16,6 +16,7 @@ class Canvas {
         this.resize()
         //initial game setting
         this.gaming = true
+        this.pause = false
         this.player = new Player(this.stageW/2, this.stageH/2, 10, this.stageW, this.stageH, 3, 'black')
         const init_e = this.spawn(1)
         this.enemies = [init_e]
@@ -23,20 +24,19 @@ class Canvas {
         this.bullets = []
         //gaming
         setInterval(() => {
-            const level = Math.ceil(Math.random() * 3)
-            const current_enemy = this.spawn(level)
-            this.enemies.push(current_enemy)
+            if (this.gaming && !this.pause) {
+                const level = Math.ceil(Math.random() * 3)
+                const current_enemy = this.spawn(level)
+                this.enemies.push(current_enemy)
+            }
         }, 1000);
-        setInterval(() => {
-            this.bullets.shift()
-        }, 5000);
         //event
         window.addEventListener('keydown', this.player.keyDown.bind(this.player))
+        window.addEventListener('keydown', this.esckey.bind(this))
         window.addEventListener('keyup', this.player.keyUp.bind(this.player))
         this.canvas.addEventListener('click', (event) => {
             const current_bullet = new Bullet(this.player.x, this.player.y, event.offsetX, event.offsetY, 3, this.stageW, this.stageH, 5, 1, 'black')
             this.bullets.push(current_bullet)
-            console.log(this.bullets)
         })
         //canvas frame
         window.requestAnimationFrame(this.animate.bind(this))
@@ -52,7 +52,7 @@ class Canvas {
     }
 
     animate() {
-        if (this.gaming) {
+        if (this.gaming && !this.pause) {
             this.ctx.clearRect(0, 0, this.stageW, this.stageH)
             this.player.update(this.ctx)
             this.bullets.forEach((b) => {
@@ -105,15 +105,33 @@ class Canvas {
     spawn(level) {
         const initial_pos = this.randomInitPosition()
         let new_enemy
-        if (level == 1) {
-            new_enemy = new Enemy(initial_pos[0], initial_pos[1], this.player.x, this.player.y, 20, this.stageW, this.stageH, 4, 1, 'green')
-        } else if (level == 2) {
-            new_enemy = new Enemy(initial_pos[0], initial_pos[1], this.player.x, this.player.y, 40, this.stageW, this.stageH, 3, 2, 'blue')
-        } else if (level == 3) {
-            new_enemy = new Enemy(initial_pos[0], initial_pos[1], this.player.x, this.player.y, 70, this.stageW, this.stageH, 2, 5, 'red')
+        switch (level) {
+            case 1:
+                new_enemy = new Enemy(initial_pos[0], initial_pos[1], this.player.x, this.player.y, 20, this.stageW, this.stageH, 4, 1, 'green')
+                break
+            case 2:
+                new_enemy = new Enemy(initial_pos[0], initial_pos[1], this.player.x, this.player.y, 40, this.stageW, this.stageH, 3, 2, 'blue')
+                break
+            case 3:
+                new_enemy = new Enemy(initial_pos[0], initial_pos[1], this.player.x, this.player.y, 70, this.stageW, this.stageH, 2, 5, 'red')
         }
 
         return new_enemy
+    }
+
+    esckey(event) {
+        const key = event.key
+        if (key == 'Escape') {
+            const esc_screen = document.getElementById('esc_screen')
+            if (this.pause) {
+                this.pause = false
+                esc_screen.style.display = 'none'
+                this.animate()
+            } else {
+                this.pause = true
+                esc_screen.style.display = 'block'
+            }
+        }
     }
 
     endGame() {
