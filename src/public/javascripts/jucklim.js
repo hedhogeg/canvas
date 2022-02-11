@@ -2,7 +2,6 @@ import {
     Player, Enemy, Bullet
 } from "./jucklim_objects.js"
 const frame = document.getElementById('canvas_frame')
-let canvas
 
 // Canvas
 class Canvas {
@@ -16,7 +15,7 @@ class Canvas {
         this.resize()
         //initial game setting
         this.gaming = true
-        this.pause = false
+        this.pause = true
         this.player = new Player(this.stageW/2, this.stageH/2, 10, this.stageW, this.stageH, 3, 'black')
         const init_e = this.spawn(1)
         this.enemies = [init_e]
@@ -119,9 +118,8 @@ class Canvas {
         return new_enemy
     }
 
-    esckey(event) {
-        const key = event.key
-        if (key == 'Escape' && this.gaming) {
+    pauseGame() {
+        if (this.gaming) {
             const esc_screen = document.getElementById('esc_screen')
             if (this.pause) {
                 this.pause = false
@@ -129,8 +127,14 @@ class Canvas {
                 this.animate()
             } else {
                 this.pause = true
-                esc_screen.style.display = 'block'
+                esc_screen.style.display = 'flex'
             }
+        }
+    }
+
+    esckey(event) {
+        if (event.key == 'Escape') {
+            this.pauseGame()
         }
     }
 
@@ -142,5 +146,6 @@ class Canvas {
 }
 
 window.onload = () => {
-    canvas = new Canvas()
+    const canvas = new Canvas()
+    document.getElementById('game_start').addEventListener('click', canvas.pauseGame.bind(canvas))
 }

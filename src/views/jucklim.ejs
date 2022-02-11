@@ -5,8 +5,8 @@
     <link rel='stylesheet' href='/stylesheets/jucklim.css' />
   </head>
   <body>
-    <div class="menu_container">
-      <div class="menu">
+    <div class="sidebar_container">
+      <div class="sidebar">
         <div class="howto">
           <h2>HOW TO PLAY</h2>
           <p>이동 : W A S D</p>
@@ -20,12 +20,16 @@
       </div>
     </div class="menu">
     <div class="canvas_container" id="canvas_frame">
-      <div id="esc_screen"></div>
+      <div id="esc_screen">
+        <button id="game_start"></button>
+      </div>
       <div id="end_screen"></div>
     </div>
-    <div class="game_info_container">
-      <div class="game_info">
-        <div class="timer"></div>
+    <div class="sidebar_container">
+      <div class="sidebar">
+        <div class="timer">
+          <p id="timer_text"></p>
+        </div>
       </div>
     </div>
 
