@@ -121,7 +121,7 @@ class Canvas {
 
     esckey(event) {
         const key = event.key
-        if (key == 'Escape') {
+        if (key == 'Escape' && this.gaming) {
             const esc_screen = document.getElementById('esc_screen')
             if (this.pause) {
                 this.pause = false
@@ -135,7 +135,8 @@ class Canvas {
     }
 
     endGame() {
-        alert("You Died")
+        const end_screen = document.getElementById('end_screen')
+        end_screen.style.display = 'block'
         this.gaming = false
     }
 }

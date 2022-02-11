@@ -5,11 +5,28 @@
     <link rel='stylesheet' href='/stylesheets/jucklim.css' />
   </head>
   <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
+    <div class="menu_container">
+      <div class="menu">
+        <div class="howto">
+          <h2>HOW TO PLAY</h2>
+          <p>이동 : W A S D</p>
+          <p>발사 : 마우스 클릭</p>
+          <p>일시 정지 : Esc</p>
+        </div>
+        <hr>
+        <button onclick="location.reload()">다시하기</button>
+        <hr>
+        <a href="/">메인 메뉴</a>
+      </div>
+    </div class="menu">
     <div class="canvas_container" id="canvas_frame">
       <div id="esc_screen"></div>
       <div id="end_screen"></div>
+    </div>
+    <div class="game_info_container">
+      <div class="game_info">
+        <div class="timer"></div>
+      </div>
     </div>
 
     <script type="module" src="/javascripts/jucklim.js"></script>
