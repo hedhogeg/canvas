@@ -16,6 +16,10 @@ class Canvas {
         //initial game setting
         this.gaming = true
         this.pause = true
+        this.milisecond = 0
+        this.second = 0
+        this.minute = 0
+        this.timer
         this.player = new Player(this.stageW/2, this.stageH/2, 10, this.stageW, this.stageH, 3, 'black')
         const init_e = this.spawn(1)
         this.enemies = [init_e]
@@ -118,16 +122,33 @@ class Canvas {
         return new_enemy
     }
 
+    setTimer() {
+        const timer = document.getElementById('timer_text')
+        if (this.milisecond == 99) {
+            this.second += 1
+            this.milisecond = 0
+        } else {
+            this.milisecond += 1
+        }
+        if (this.second == 60) {
+            this.minute += 1
+            this.second = 0
+        }
+        timer.innerText = `${this.minute < 10 ? `0${this.minute}` : `${this.minute}`}:${this.second < 10 ? `0${this.second}` : `${this.second}`}.${this.milisecond < 10 ? `0${this.milisecond}` : `${this.milisecond}`}`
+    }
+
     pauseGame() {
         if (this.gaming) {
             const esc_screen = document.getElementById('esc_screen')
             if (this.pause) {
                 this.pause = false
                 esc_screen.style.display = 'none'
+                this.timer = setInterval(this.setTimer.bind(this), 10)
                 this.animate()
             } else {
                 this.pause = true
                 esc_screen.style.display = 'flex'
+                clearInterval(this.timer)
             }
         }
     }
@@ -139,6 +160,7 @@ class Canvas {
     }
 
     endGame() {
+        clearInterval(this.timer)
         const end_screen = document.getElementById('end_screen')
         end_screen.style.display = 'block'
         this.gaming = false
