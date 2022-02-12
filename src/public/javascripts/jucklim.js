@@ -23,16 +23,10 @@ class Canvas {
         this.player = new Player(this.stageW/2, this.stageH/2, 10, this.stageW, this.stageH, 3, 'black')
         const init_e = this.spawn(1)
         this.enemies = [init_e]
-        this.dead_enemies = 0
+        this.dead_enemies = [0, 0, 0, 0]
         this.bullets = []
         //gaming
-        setInterval(() => {
-            if (this.gaming && !this.pause) {
-                const level = Math.ceil(Math.random() * 3)
-                const current_enemy = this.spawn(level)
-                this.enemies.push(current_enemy)
-            }
-        }, 1000);
+        this.spawning
         //event
         window.addEventListener('keydown', this.player.keyDown.bind(this.player))
         window.addEventListener('keydown', this.esckey.bind(this))
@@ -62,23 +56,29 @@ class Canvas {
                 b.update(this.ctx)
             })
             this.enemies.forEach((e) => {
-                if (e.health) {
-                    const pedistance = Math.hypot(this.player.x - e.x, this.player.y - e.y)
-                    if (pedistance <= this.player.radius + e.radius) {
-                        this.endGame()
-                    }
-                    this.bullets.forEach((b) => {
-                        const bedistance = Math.hypot(b.x - e.x, b.y - e.y)
-                        if (bedistance <= b.radius + e.radius) {
-                            e.health -= b.damage
-                            const bullet_index = this.bullets.indexOf(b)
-                            this.bullets.splice(bullet_index, 1)
-                        }
-                        
-                    })
-                    e.update(this.ctx)
+                if (e.x < -51 || e.x > 51 + this.stageW || e.y < -51 || e.y > 51 + this.stageH) {
+                    this.enemies.splice(this.enemies.indexOf(e), 1)
                 } else {
-                    
+                    if (e.health == 0) {
+                        this.enemies.splice(this.enemies.indexOf(e), 1)
+                        this.dead_enemies[e.level] += 1
+                    } else {
+                        const pedistance = Math.hypot(this.player.x - e.x, this.player.y - e.y)
+                        if (pedistance <= this.player.radius + e.radius) {
+                            this.endGame()
+                        }
+                        this.bullets.forEach((b) => {
+                            if (!(b.x < -b.radius || b.x > b.radius + this.stageW || b.y < -b.radius || b.y > b.radius + this.stageH)) {
+                                const bedistance = Math.hypot(b.x - e.x, b.y - e.y)
+                                if (bedistance <= b.radius + e.radius) {
+                                    e.health -= b.damage
+                                    const bullet_index = this.bullets.indexOf(b)
+                                    this.bullets.splice(bullet_index, 1)
+                                }
+                            } 
+                        })
+                        e.update(this.ctx)
+                    }
                 }
             })
             window.requestAnimationFrame(this.animate.bind(this))
@@ -110,16 +110,25 @@ class Canvas {
         let new_enemy
         switch (level) {
             case 1:
-                new_enemy = new Enemy(initial_pos[0], initial_pos[1], this.player.x, this.player.y, 20, this.stageW, this.stageH, 4, 1, 'green')
+                new_enemy = new Enemy(1, initial_pos[0], initial_pos[1], this.player.x, this.player.y, 20, this.stageW, this.stageH, 4, 1, 'green')
                 break
             case 2:
-                new_enemy = new Enemy(initial_pos[0], initial_pos[1], this.player.x, this.player.y, 40, this.stageW, this.stageH, 3, 2, 'blue')
+                new_enemy = new Enemy(2, initial_pos[0], initial_pos[1], this.player.x, this.player.y, 40, this.stageW, this.stageH, 3, 2, 'blue')
                 break
             case 3:
-                new_enemy = new Enemy(initial_pos[0], initial_pos[1], this.player.x, this.player.y, 70, this.stageW, this.stageH, 2, 5, 'red')
+                new_enemy = new Enemy(3, initial_pos[0], initial_pos[1], this.player.x, this.player.y, 70, this.stageW, this.stageH, 2, 5, 'red')
         }
 
         return new_enemy
+    }
+
+    spawnEnemies() {
+        if (this.gaming && !this.pause) {   
+            for (let i=0;i<5;i++) {
+                const current_enemy = this.spawn(1)
+                this.enemies.push(current_enemy)
+            }
+        }
     }
 
     setTimer() {
@@ -144,11 +153,13 @@ class Canvas {
                 this.pause = false
                 esc_screen.style.display = 'none'
                 this.timer = setInterval(this.setTimer.bind(this), 10)
+                this.spawning = setInterval(this.spawnEnemies.bind(this), 1000);
                 this.animate()
             } else {
                 this.pause = true
                 esc_screen.style.display = 'flex'
                 clearInterval(this.timer)
+                clearInterval(this.spawning)
             }
         }
     }
@@ -164,6 +175,7 @@ class Canvas {
         const end_screen = document.getElementById('end_screen')
         end_screen.style.display = 'block'
         this.gaming = false
+        console.log(this.dead_enemies)
     }
 }
 

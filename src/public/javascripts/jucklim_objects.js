@@ -97,7 +97,8 @@ export class Player {
 }
 
 export class Enemy {
-    constructor(x, y, px, py, radius, stageW, stageH, velocity, health, color) {
+    constructor(level, x, y, px, py, radius, stageW, stageH, velocity, health, color) {
+        this.level = level
         this.x = x
         this.y = y
         this.px = px
